@@ -1,4 +1,4 @@
-#Device definition
+# Device definition
 
 For the definition of a device a json file and a java class are needed. The json file
 describes the interface, state, connection details, and telemetry format of a device and the
