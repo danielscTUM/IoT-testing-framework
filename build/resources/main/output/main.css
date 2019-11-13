@@ -1,0 +1,188 @@
+:root {
+  --mainbackground: hsl(0, 0%, 85%);
+  --navigation: #91B7C7;
+  --widgets: #6EB4D1;
+  --linkfarbe: #70868A;
+  --grau2: #5B6D70;
+  --highlight: #14FBFF;
+}
+
+html, body {
+  font-family: sans-serif;
+}
+
+.tdDeviceId {
+  cursor: pointer;
+}
+
+#content {
+  height: 100%;
+}
+
+#navigation {
+  background: var(--navigation);
+  height: 100%;
+  width: 200px;
+  padding: 0px 10px;
+}
+
+#navigation ul {
+  padding: 5px;
+}
+
+#navigation li {
+  list-style-type: none;
+  margin: 2px;
+  padding: 5px;
+  background-color: hsl(0, 0%, 80%);
+  cursor: pointer;
+}
+
+#navigation li:hover {
+  background-color: hsl(0, 0%, 90%);
+}
+
+#navigation li[selected=true] {
+  background-color: var(--highlight);
+}
+
+#resultContainer {
+  height: 100%;
+  background: var(--mainbackground);
+  width: calc(100% - 200px);
+  padding-left: 20px;
+  overflow: scroll;
+}
+
+#result {
+  margin-left: 50px;
+}
+
+div[val]::after {
+  content: "";
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  float: right;
+
+}
+
+div[val="positive"]::after {
+  background-color: green;
+}
+
+div[val="negative"]::after {
+  background-color: red;
+}
+
+.tab {
+  font-size: 1em;
+  position: relative;
+  display: inline-block;
+  padding: .7em 1em 0;
+  margin-right: -1em;
+  cursor: pointer;
+}
+
+.tab[open="true"] {
+  z-index: 10;
+}
+
+.tab[open="false"] {
+  z-index: 1;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  border: 1px solid rgba(0, 0, 0, .4);
+  border-bottom: none;
+  border-radius: .3em .4em 0 0;
+  transform: perspective(.5em) rotateX(4deg);
+  transform-origin: bottom;
+  margin-bottom: -2px;
+}
+
+.tab[open="true"]::before {
+  background: hsl(0, 0%, 85%);
+}
+
+.tab[open="false"]::before {
+  background: linear-gradient(hsl(0, 0%, 80%), hsl(1, 0%, 50%));
+}
+
+#result_navigation {
+  padding-left: 20px;
+}
+
+#result_area {
+  background-color: var(--widgets);
+  min-width: 500px;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, .4);
+  overflow: scroll;
+  border-radius: .3em;
+  display: inline-block;
+  max-height: 600px;
+}
+
+#infoLog {
+  height: 550px;
+}
+
+#connection_results {
+  background-color: lightcyan;
+  border: 1px solid rgba(0, 0, 0, .4);
+  overflow: scroll;
+  border-radius: .3em;
+  display: inline-block;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+#connection_results ul {
+  padding: 0 2em;
+}
+
+#connection_results li {
+  padding-bottom: 10px;
+  list-style-type: none;
+}
+
+#connection_results li strong{
+  float: right;
+  padding-left: 2em;
+}
+
+#device_info {
+  background-color: lightpink;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: .3em;
+  border: 1px solid rgba(0, 0, 0, .4);
+}
+
+#device_info li {
+  padding-bottom: 10px;
+  list-style-type: none;
+}
+
+#device_info li strong{
+  float: right;
+  padding-left: 2em;
+}
+
+#device_info ul {
+  padding: 0 2em;
+}
+
+.result_panel{
+  float: left;
+}
+

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: device-simulator-config-${POD_ID}
+data:
+  test_env: ${TARGET_ENV}
+
+  # Note these numbers are per instance (see device_simulator_job.yaml for number of instances)
+  usercount: "${USER_PER_POD}"
+  activeusercount: "0"
+  useroffset: "${OFFSET_FOR_POD}"
+  duration: "${DURATION}"
+  ramp: "${RAMP_UP}"

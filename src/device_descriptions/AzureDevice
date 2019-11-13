@@ -1,0 +1,26 @@
+{
+  "className": "com.ds.iot.framework.examples.devices.AzureDevice",
+  "state": {
+    "initialState": {
+      "temperature": "80"
+    },
+    "stateChange": {
+      "startCommand": "startChange",
+      "type": "function",
+      "interval": 1,
+      "function": "stateChange"
+    }
+  },
+  "tag": "heat pump",
+  "connection": {
+    "protocol": "Azure",
+    "url": "henningsfirstiothub.azure-devices.net",
+    "params": {
+        "iotHubConnectionString": "HostName=henningsfirstiothub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=biw7a07Ghg/DEghKIolnV9Iwt042AmabFS4SBx2BtN0="
+    }
+  },
+  "userInterface": [
+    "requestPairingTan -> requestPairingTan",
+    "RequestPairingTan -> receivePairingTan"
+  ]
+}

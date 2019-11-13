@@ -1,0 +1,31 @@
+{
+  "className": "com.ds.iot.framework.examples.devices.Radiator",
+  "state": {
+    "initialState": {
+      "temperature": "80"
+    },
+    "stateChange": {
+      "startCommand": "startChange",
+      "type": "data",
+      "interval": 1,
+      "data": {
+        "path": "RadiatorTelemetryData1",
+        "mode": "simple"
+      }
+    }
+  },
+  "tag": "radiator",
+  "connection": {
+    "protocol": "MQTT",
+    "url": "localhost"
+  },
+  "userInterface": [
+    "changeTemperature\\?temperature=\\d* -> changeTemperature",
+    "register\\?userId=.* -> register"
+  ],
+  "telemetry": {
+    "interval": 1000,
+    "messageTemplate": {"id": "${deviceId}","temperature": "${temperature}"},
+    "startCommand": "TestTelemetry"
+  }
+}

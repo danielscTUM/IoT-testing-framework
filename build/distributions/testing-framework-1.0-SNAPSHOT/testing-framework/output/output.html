@@ -1,0 +1,158 @@
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>New Page</title>
+
+  <script src="jquery-3.4.1.min.js" type="text/javascript"></script>
+  <script src="d3.min.js" type="text/javascript"></script>
+  <script src="boxplot.js" type="text/javascript"></script>
+  <script src="data.js" type="text/javascript"></script>
+  <link href="main.css" rel="stylesheet"/>
+
+
+</head>
+<body>
+<div id="content" style="display: flex;">
+  <div id="navigation" style="width: 300px; list-style-type: none">
+    <ul id="tests"></ul>
+  </div>
+  <div id="resultContainer">
+    <h3 id="result_header"></h3>
+    <div id="result">
+      <div id="log_results">
+        <div id="result_navigation">
+          <nav class="tab" open="true" key="infoLog">Info Log</nav>
+          <nav class="tab" open="false" key="errorLog">Error Log</nav>
+        </div>
+        <div id="result_area">
+        </div>
+      </div>
+
+      <div id="connection_results">
+
+      </div>
+
+      <div id="device_info">
+        <h3>Device Info</h3>
+        <ul></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<script>
+  let testData = output.data;
+  $(document).ready(function () {
+    initialize();
+  });
+
+  function initialize() {
+    let positive_count = 0;
+    let negative_count = 0;
+    testData.data.forEach(function (value, index) {
+      let dataSet = value;
+      if (dataSet.result === "positive") {
+        positive_count++;
+      } else {
+        negative_count++;
+      }
+      let li = $("<li></li>").html(getResult(dataSet.name, dataSet)).click(function () {
+        $("#navigation li").each(function () {
+          this.setAttribute("selected", "false");
+        });
+        this.setAttribute("selected", "true");
+        drawLog(dataSet);
+      });
+      $("#tests").append(li);
+      if (index === 0) {
+        li.click();
+      }
+    });
+    $("#navigation").prepend(
+        "<h3>Tests</h3><span><span style='color: orangered'>" + negative_count
+        + "</span> tests failed, <span style='color: lightgreen'>" + positive_count
+        + "</span> tests passed</span>");
+  }
+
+  function getResult(key, test) {
+    return test.result === "positive" ? "<div val='positive'>" + key + "</div>"
+        : "<div val='negative'>" + key + "</div>"
+  }
+
+  function drawLogTable(logData) {
+    let infoLogTable = $(
+        "<table><tr><th>Time (ms)</th><th>Message</th><th>Device ID</th></tr></table>");
+    infoLogTable.attr("style", "width: 500px");
+    logData.forEach(function (d) {
+      infoLogTable.append(
+          "<tr><td>" + d.time + "</td><td>" + d.message + "</td><td class='tdDeviceId'>"
+          + d.deviceId + "</td></tr>");
+    });
+    return infoLogTable;
+  }
+
+  function putResultAreaContent(content) {
+    $("#result_area").html("");
+    $("#result_area").append(content);
+  }
+
+  function drawLog(dataSet, filter) {
+    data = filter ? dataSet.filter(filter) : dataSet;
+
+    let infoLogTable = drawLogTable(dataSet.infoLog);
+    let errorLogTable = drawLogTable(dataSet.errorLog);
+
+    let contentMap = {"infoLog": infoLogTable, "errorLog": errorLogTable};
+
+    $("#result_header").text("Result for " + dataSet.name);
+
+    $("#connection_results").html(
+        $("<h3>Connection data</h3><div id='boxplotArea'></div><ul><li>Count: <strong>" + dataSet.connections.count + "</strong></li>" +
+            "<li>Max duration: <strong>" + d3.format(".3~s")(dataSet.connections.maxDuration/1000000.0) + " ms</strong></li>" +
+            "<li>Median duration: <strong>" + d3.format(".3~s")(dataSet.connections.medianDuration/1000000.0) + " ms</strong></li>" +
+            "<li>Min duration: <strong>" + d3.format(".3~s")(dataSet.connections.minDuration/1000000.0) + " ms</strong></li></ul>"
+        ));
+
+    let boxplotData = {
+      min: dataSet.connections.minDuration/1000000.0,
+    q1: dataSet.connections.q1Duration/1000000.0,
+    median: dataSet.connections.medianDuration/1000000.0,
+    q3: dataSet.connections.q3Duration/1000000.0,
+    max: dataSet.connections.maxDuration/1000000.0
+  };
+
+    createBoxplot("#boxplotArea", boxplotData);
+
+    $("#device_info ul").html("");
+    for(let key in dataSet.tagMap) {
+      let value = dataSet.tagMap[key];
+      $("#device_info ul").append("<li>" + key + ": <strong>" + value + "</strong></li>");
+    };
+
+    putResultAreaContent(infoLogTable);
+
+    $(".tab").click(function () {
+      $(".tab").each(function () {
+        this.setAttribute("open", "false");
+      });
+      this.setAttribute("open", "true");
+      console.log($(this).attr("key"));
+      putResultAreaContent(contentMap[$(this).attr("key")]);
+    });
+
+    if (filter) {
+      $(".tdDeviceId").click(function () {
+        drawLog(dataSet, null);
+      })
+    } else {
+      $(".tdDeviceId").click(function () {
+        let a = $(this).text();
+        drawLog(dataSet, function (e) {
+          return e.deviceId === a
+        });
+      })
+    }
+  }
+
+</script>

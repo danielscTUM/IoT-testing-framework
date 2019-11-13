@@ -1,0 +1,28 @@
+{
+  "className": "com.ds.iot.framework.examples.devices.AzureDevice",
+  "state": {
+    "initialState": {
+      "temperature": "80"
+    },
+    "stateChange": {
+      "startCommand": "startChange",
+      "type": "function",
+      "interval": 1,
+      "function": "stateChange"
+    }
+  },
+  "tag": "radiator",
+  "connection": {
+    "protocol": "MQTT",
+    "url": "192.168.178.24"
+  },
+  "userInterface": [
+    "requestPairingTan -> requestPairingTan",
+    "receivePairingTan -> receivePairingTan"
+  ],
+  "telemetry": {
+    "interval": 10,
+    "messageTemplate": {"temperature": "${temperature}", "humidity":  "${humidity}"},
+    "startCommand": "startTelemetry"
+  }
+}

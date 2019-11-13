@@ -1,0 +1,13 @@
+{
+  "className": "com.ds.iot.framework.devices.App",
+  "connection": {
+    "protocol": "MQTT",
+    "url": "tcp://192.168.178.24:1883"
+  },
+  "tag": "app",
+  "userInterface": [
+    "print\\?message=.* -> print",
+    "configureDunstabzugshaube\\?frequency=\\d*&id=.* -> configureDustabzugshaube",
+    "signIn\\?userId=.* -> signIn"
+  ]
+}

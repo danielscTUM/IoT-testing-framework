@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: device-simulator-$DEVICE_SIMULATOR_NUMBER
+  labels:
+    jobgroup: device-simulator
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        jobgroup: device-simulator
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: device-simulator-$DEVICE_SIMULATOR_NUMBER
+          image: $IMAGE
+          terminationMessagePolicy: FallbackToLogsOnError
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: 0.3
+
+          env:
+            - name: POD_NUMBER
+              valueFrom:
+                configMapKeyRef:
+                  name: device-simulator-config-$DEVICE_SIMULATOR_NUMBER
+                  key: pod_number
+
+            - name: NUMBER_OF_PODS
+              valueFrom:
+                configMapKeyRef:
+                  name: device-simulator-config-$DEVICE_SIMULATOR_NUMBER
+                  key: number_of_pods
+
+            - name: TEST_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: device-simulator-config-$DEVICE_SIMULATOR_NUMBER
+                  key: test_env
+
+      initContainers:
+        - name: sysctl-init
+          image: alpine:3.8
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Setting sysctl values from now to infinity and beyond..."
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+  backoffLimit: 0
