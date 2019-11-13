@@ -158,19 +158,19 @@ The error log contains per default all incidents of messages that devices are un
 devices received during the simulation. It is also possible to log custom events as well. This is done by using the methods
 `logError(String message)` and `logInfo(String message)` that are provided by the `Device` superclass.
 
-#Connection Strategies
+# Connection Strategies
 There exist four default connection strategies that can be used to connect a simulated device to an IoT backend.
 Which of them is used, is defined in the JSON file of a device definition under the key "connection.protocol". The options are "MQTT", "AMQP", "WebSocket" and "Azure".
 
-###Azure
+### Azure
 The Azure connection strategy connects a simulated device with an Azure IoT Hub. To use this option, you have to specify additional parameters
 under "connection.params". Absolutely mandatory is the parameter "iotHubConnectionString". If you want to connect as a registered device, the parameter "deviceConnectionString"
 is needed as well. However, if you want to register devices on the fly the parameter is not needed but you have to make sure that this is allowed by your IoT Hub settings.
 
-###Create new connection strategies
+### Create new connection strategies
 To create a custom connection strategy you have to provide a Java class that is marked with the annotation `@CommunicationStrategy(key=<key>)` and that inherits from the class 'CommunicationStrategyBase'. The "key" argument in the annotation determines how the protocol can be specified in the definition of devices. 
 
-#Message handling
+# Message handling
 When a device receives a message, it's message handler compares a key that is extracted from the message to the list of regular expressions which form the device interface that has been defined by the user of the testing framework. 
 If the key matches one of the entries, the method connected with this entry is executed to simulate the device behavior. In addition, the event is logged in the device's info log. 
 If the message does not match any of the entries the event is logged in the device's error log. 
@@ -184,7 +184,7 @@ hold additional data.
 
 If the recived message has an arbitrary format, the method `SimpleEntry<String, Object> handleCustomFormatMessage(Object message)` has to be overwritten to extract the key.
 
-#Simulated User
+# Simulated User
 Beside the simple interaction model, where simulated devices react to commands from a given scenario, a dynamic
 interaction between the testing framework and the simulated devices is possible using simulated users. In this case, the
 simulated user is controlled by a (mostly simpler) scenario and  it reacts dynamically to responses from the simulated devices.
@@ -209,7 +209,7 @@ A test case using an extended simulated user could look like this:
   }
 ```
 
-#Execute on cluster
+# Execute on cluster
 To run device simulations on a cluster, the script run_tests.sh is used with two parameters
 The first parameter is the number of pods that should be created and the second parameter is the docker
 image that should be run on the pods.
