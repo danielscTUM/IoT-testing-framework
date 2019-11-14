@@ -215,7 +215,7 @@ The first parameter is the number of pods that should be created and the second 
 image that should be run on the pods.
 
 ```
-./run_tests.sh 3 backendTest:latest
+scripts/run_tests.sh 3 backendTest:latest
 ```
 
 In our example we run the container backendTest:latest on 3 pods.
