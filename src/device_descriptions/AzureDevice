@@ -11,12 +11,12 @@
       "function": "stateChange"
     }
   },
-  "tag": "heat pump",
+  "tag": "<tag>",
   "connection": {
     "protocol": "Azure",
-    "url": "henningsfirstiothub.azure-devices.net",
+    "url": "<url>",
     "params": {
-        "iotHubConnectionString": "HostName=henningsfirstiothub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=biw7a07Ghg/DEghKIolnV9Iwt042AmabFS4SBx2BtN0="
+        "iotHubConnectionString": "<connectionString"
     }
   },
   "userInterface": [

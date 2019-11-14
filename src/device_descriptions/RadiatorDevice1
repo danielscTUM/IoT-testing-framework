@@ -7,7 +7,7 @@
     "stateChange": {
       "startCommand": "startChange",
       "type": "data",
-      "interval": 1,
+      "interval": 1000,
       "data": {
         "path": "RadiatorTelemetryData1",
         "mode": "simple"
@@ -17,7 +17,7 @@
   "tag": "radiator",
   "connection": {
     "protocol": "MQTT",
-    "url": "localhost"
+    "url": "192.168.178.24"
   },
   "userInterface": [
     "changeTemperature\\?temperature=\\d* -> changeTemperature",
@@ -26,6 +26,6 @@
   "telemetry": {
     "interval": 1000,
     "messageTemplate": {"id": "${deviceId}","temperature": "${temperature}"},
-    "startCommand": "TestTelemetry"
+    "startCommand": "startTelemetry"
   }
 }

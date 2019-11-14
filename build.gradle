@@ -103,7 +103,7 @@ task testAll(type: Exec) {
 }
 
 // application plugin config
-mainClassName = 'com.ds.iot.framework.Main'
+mainClassName = 'com.ds.iot.framework.examples.Main'
 
 docker {
     name 'felsywaschbaer/framework2:latest'

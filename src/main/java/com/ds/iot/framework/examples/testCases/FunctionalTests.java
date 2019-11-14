@@ -3,14 +3,12 @@ package com.ds.iot.framework.examples.testCases;
 
 import static com.ds.iot.framework.simulation.Simulation.simulation;
 import static com.ds.iot.framework.simulation.UI.atOnce;
+import static com.ds.iot.framework.simulation.UI.ramp;
 import static com.ds.iot.framework.simulation.UI.scenario;
-import static com.ds.iot.framework.simulation.UI.userDeviceGroup;
 
 import com.ds.iot.framework.TestDriver.SimulationTest;
-import com.ds.iot.framework.examples.users.AzureUser;
 import com.ds.iot.framework.simulation.JsonExtractor;
 import com.ds.iot.framework.simulation.Scenario;
-import com.ds.iot.framework.simulation.SimulatedUser;
 
 
 public class FunctionalTests {
@@ -32,14 +30,29 @@ public class FunctionalTests {
         "print?message=Temperature of device radiator0 has been set to 5.0");
   }
 
-  //@SimulationTest
-  public static void azureTest2() {
-    SimulatedUser user1 = new AzureUser();
-    user1.exec("connect");
+  @SimulationTest
+  public static void test1() {
+    Scenario telemetry = scenario("Telemetry").exec("connect").exec("register?userId=User1")
+        .pause(1).exec("TestTelemetry").exec("startChange");
+    Scenario signInApp = scenario("SignIn").exec("connect").pause(1).exec("signIn?userId=User1");
 
-    simulation().setUserDeviceGroups(
-        userDeviceGroup(user1, JsonExtractor.buildDevice("AzureDevice", "heatPump"),
-            JsonExtractor.buildDevice("AzureAppDevice", "app"))
-    ).start(7000);
+    simulation().setDevices(
+        atOnce(JsonExtractor.buildDevice(appPath, 1, "app"), signInApp),
+        ramp(JsonExtractor.buildDevice(radiatorPath, 2, "radiator"), 1, telemetry)
+    ).start(5000)
+        .checkMessageInterval("print\\?message=\\{\"temperature\":\"\\d*\",\"id\":\"radiator1\"\\}", 900,
+            1100);
+  }
+
+  @SimulationTest
+  public static void functionalTest2() {
+    Scenario telemetry = scenario("Telemetry").exec("connect").exec("register?userId=User1").exec("changeTemperature?temperature=42");
+    Scenario signInApp = scenario("SignIn").exec("connect").pause(1).exec("signIn?userId=User1");
+
+    simulation().setDevices(
+        atOnce(JsonExtractor.buildDevice(appPath, 1, "app"), signInApp),
+        ramp(JsonExtractor.buildDevice(radiatorPath, 1, "radiator"), 1, telemetry)
+    ).start(0).checkMessageResponse("changeTemperature\\?temperature=\\d*",
+        "print\\?message=Temperature for device .* has been set to \\d*", "radiator0", "app0", 2000);
   }
 }

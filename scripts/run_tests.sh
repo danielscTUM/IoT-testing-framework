@@ -54,12 +54,15 @@ done
 
 finished=0
 while [[ ${finished} == 0 ]]; do
-  finished=1
   STATUS=$(kubectl get pod -l job-name=device-simulator-0 -o jsonpath="{.items[0].status.phase}")
   POD=$(kubectl get pod -l job-name=device-simulator-0 -o jsonpath="{.items[0].metadata.name}")
-  stat=$(kubectl exec ${POD} -- cat status)
-  if [[ ! ${stat} == finished ]]
-    then finished=0
+  FILE_EXIST=$(kubectl exec ${POD} -- find . -maxdepth 1 -name 'status' | wc -l)
+  if [[ FILE_EXIST -gt 0 ]]
+    then stat=$(kubectl exec ${POD} -- cat status)
+
+    if [[ ${stat} == finished ]]
+      then finished=1
+    fi
   fi
   echo Wait
   sleep 1

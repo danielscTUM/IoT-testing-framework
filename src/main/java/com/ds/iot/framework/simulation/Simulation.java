@@ -69,9 +69,17 @@ public class Simulation {
    * @return simulation object
    */
   public Simulation start(int intendedDuration) {
+    System.out.println("Start simulation");
+    System.out.println(pod_count);
+    System.out.println(pod_number);
+    System.out.println(test_env);
     simulationName = Thread.currentThread().getStackTrace()[2].getMethodName();
+    System.out.println(simulationName);
     if (test_env != null) {
       jedis = new Jedis("redis-master");
+      if(pod_number == 0){
+        jedis.del(simulationName + "_log_counter");
+      }
       jedis.incr(simulationName + "_counter");
       while (Integer.parseInt(jedis.get(simulationName + "_counter")) < pod_count) {
         try {
@@ -104,7 +112,10 @@ public class Simulation {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+
+    System.out.println("Stop communication");
     deviceMap.forEach((key, device) -> {
+      System.out.println("Disconnect");
       device.getDevice().getCommunicationStrategy().disconnect();
       infoLog.addAll(device.getDevice().getInfoLog(), device.getDevice().getDeviceId());
       errorLog.addAll(device.getDevice().getErrorLog(), device.getDevice().getDeviceId());
@@ -122,7 +133,7 @@ public class Simulation {
     });
 
     if (test_env != null) {
-
+      System.out.println("Store pod info");
       storePodInfo(tags);
 
       if (pod_number == 0) {
@@ -181,15 +192,18 @@ public class Simulation {
   }
 
   private void loadPodInfos(HashMap<String, Long> tags) {
+    System.out.println("Load pod infos");
     ObjectMapper objectMapper = new ObjectMapper();
     jedis.del(simulationName + "_counter");
-    while (Integer.parseInt(jedis.get("log_counter")) < pod_count) {
+    while (Integer.parseInt(jedis.get(simulationName + "_log_counter")) < pod_count) {
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
+        System.out.println("Error while sleep");
         e.printStackTrace();
       }
     }
+    jedis.del(simulationName + "_log_counter");
     for (int i = 1; i < pod_count; i++) {
       try {
         infoLog.joinLog(objectMapper.readValue(jedis.get(i + "_info"), MessageLog.class));
@@ -224,7 +238,7 @@ public class Simulation {
       jedis.set(pod_number + "_deviceMap", objectMapper.writeValueAsString(tags));
       jedis.set(pod_number + "_metrics", objectMapper.writeValueAsString(metrics));
       Thread.sleep(1000); // make sure that the values have been set
-      jedis.incr("log_counter");
+      jedis.incr(simulationName + "_log_counter");
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
@@ -234,6 +248,7 @@ public class Simulation {
 
   private void stop() {
     this.executorService.shutdown();
+    System.out.println("---------------------------");
   }
 
   public interface NoArgumentFunction {
