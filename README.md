@@ -209,6 +209,9 @@ A test case using an extended simulated user could look like this:
   }
 ```
 
+# Results 
+At the end of a test run, the results are provided in a "results" folder that contains an HTML file, that can be read offline with a modern browser, and all the necessary additional files to create a simple page containing the information about the executed test cases which can be inspected interactively by selecting a single test case and filtering the message log for interesting parts.
+
 # Execute on cluster
 To run device simulations on a cluster, the script run_tests.sh is used with two parameters
 The first parameter is the number of pods that should be created and the second parameter is the docker
