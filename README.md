@@ -1,4 +1,7 @@
-# Device definition
+# IoT testing framework
+This project contains the code of a testing framework for IoT backends featuring a device simulator that supports the simulation of complex IoT devices the behavior of which can be defined by the users of the framework. Beside a local testing on a single machine which makes it possible to simultaneously simulate thousands of devices, a distributed execution on a Kubernetes cluster is supported which augments that number to tens of thousands of devices. In contrast to other tools that can be useful in the testing of IoT backends, the new framework is both a proper IoT device simulator and a real test engine
+
+## Device definition
 
 For the definition of a device a json file and a java class are needed. The json file
 describes the interface, state, connection details, and telemetry format of a device and the
@@ -105,7 +108,7 @@ thereby determine the topic that is used to send telemetry data.
 The `changeTemperature(String command, Object data)` method can be used to change the radiators temperature.
 
 
-# Scenario
+## Scenario
 During a device simulation, simulated devices execute a predefined scenario. We follow the example from above
 and define the scenario for our radiator device. 
 ```
@@ -119,7 +122,7 @@ Scenario registerRadiator = scenario("RegisterRadiator")
 The `scenario(String name)` method creates a scenario. With `exec(String command)` we can add commands that are send
 to the device during execution. The `pause(long seconds)`method adds pause to the scenario.
 
-# Device Simulation
+## Device Simulation
 
 ```
 simulation().setDevices(
@@ -135,7 +138,7 @@ To spread the execution start of a list of devices the method `ramp(List<Device>
 can be used. Eventually the simulation is kicked of with the `start(long milliseconds`) method that also defines
 the duration of the simulation.
 
-# Checks
+## Checks
 After the simulation checks can be performed to assert that the test was successful.
 
 ```
@@ -152,13 +155,13 @@ with the regular expression "message" ranges between "max" and "min".
 message that matches "messageA" in the message log of a device with idA is responded by a message that matches "messageB" in the log of a device
 with "idB" and that the delay between those messages is smaller than "maxDelay".
 
-# Logs
+## Logs
 Two logs are created at the end of the simulation from the individual logs of the simulated devices. The error log and the info log.
 The error log contains per default all incidents of messages that devices are unable to handle. The info log contains all messages that 
 devices received during the simulation. It is also possible to log custom events as well. This is done by using the methods
 `logError(String message)` and `logInfo(String message)` that are provided by the `Device` superclass.
 
-# Connection Strategies
+## Connection Strategies
 There exist four default connection strategies that can be used to connect a simulated device to an IoT backend.
 Which of them is used, is defined in the JSON file of a device definition under the key "connection.protocol". The options are "MQTT", "AMQP", "WebSocket" and "Azure".
 
@@ -170,7 +173,7 @@ is needed as well. However, if you want to register devices on the fly the param
 ### Create new connection strategies
 To create a custom connection strategy you have to provide a Java class that is marked with the annotation `@CommunicationStrategy(key=<key>)` and that inherits from the class 'CommunicationStrategyBase'. The "key" argument in the annotation determines how the protocol can be specified in the definition of devices. 
 
-# Message handling
+## Message handling
 When a device receives a message, it's message handler compares a key that is extracted from the message to the list of regular expressions which form the device interface that has been defined by the user of the testing framework. 
 If the key matches one of the entries, the method connected with this entry is executed to simulate the device behavior. In addition, the event is logged in the device's info log. 
 If the message does not match any of the entries the event is logged in the device's error log. 
@@ -184,7 +187,7 @@ hold additional data.
 
 If the recived message has an arbitrary format, the method `SimpleEntry<String, Object> handleCustomFormatMessage(Object message)` has to be overwritten to extract the key.
 
-# Simulated User
+## Simulated User
 Beside the simple interaction model, where simulated devices react to commands from a given scenario, a dynamic
 interaction between the testing framework and the simulated devices is possible using simulated users. In this case, the
 simulated user is controlled by a (mostly simpler) scenario and  it reacts dynamically to responses from the simulated devices.
@@ -209,10 +212,10 @@ A test case using an extended simulated user could look like this:
   }
 ```
 
-# Results 
+## Results 
 At the end of a test run, the results are provided in a "results" folder that contains an HTML file, that can be read offline with a modern browser, and all the necessary additional files to create a simple page containing the information about the executed test cases which can be inspected interactively by selecting a single test case and filtering the message log for interesting parts.
 
-# Execute on cluster
+## Execute on cluster
 To run device simulations on a Kubernetes cluster, the script run_tests.sh is used with two parameters
 The first parameter is the number of pods that should be created and the second parameter is the docker
 image that should be run on the pods. The assignment of devices that should be simulated to the pods is done automatically, as well as the communication with the cluster to get the test results.
